@@ -1,18 +1,21 @@
+"use client";
 import { ActiveLink } from "@/components/common";
 import { ModeToggle } from "@/components/common/ModeToggle";
+import { IconMember } from "@/components/icons";
 import { menuItems } from "@/constants";
 import { TMenuItem } from "@/types";
-import { UserButton } from "@clerk/nextjs";
+import { useAuth, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import React from "react";
 const Sidebar = () => {
+  const { userId } = useAuth();
   return (
-    <aside className="p-5 border-r dark:bg-grayDarker dark:border-opacity-10 border-r-gray-200 bg-white flex flex-col">
+    <div className="hidden p-5 border-r borderDarkMode bgDarkMode bg-white lg:flex flex-col fixed top-0 left-0 bottom-0 w-[300px]">
       <Link href="/" className="font-bold text-3xl inline-block mb-5">
         <span className="text-primary">U</span>
         cademy
       </Link>
-      <ul className="flex flex-col gap-2">
+      <ul className="flex flex-col gap-1">
         {menuItems.map((item, index) => (
           <MenuItem
             key={index}
@@ -24,17 +27,26 @@ const Sidebar = () => {
       </ul>
       <div className="mt-auto flex justify-end gap-4">
         <ModeToggle />
-        <UserButton />
+        {!userId ? (
+          <Link
+            href="/sign-in"
+            className="size-10 rounded-lg bg-primary text-white flex items-center justify-center p-1"
+          >
+            <IconMember />
+          </Link>
+        ) : (
+          <UserButton />
+        )}
       </div>
-    </aside>
+    </div>
   );
 };
-function MenuItem({ url = "/", title = "", icon }: TMenuItem) {
+export function MenuItem({ url = "/", title = "", icon, onlyIcon }: TMenuItem) {
   return (
     <li>
       <ActiveLink url={url}>
         {icon}
-        {title}
+        {onlyIcon ? null : title}
       </ActiveLink>
     </li>
   );
