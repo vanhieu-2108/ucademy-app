@@ -7,19 +7,22 @@ import {
 } from "@/components/ui/accordion";
 import LessonItem from "@/components/lesson/LessonItem";
 import { ILesson } from "@/database/lesson.model";
+import { IHistory } from "@/database/history.model";
 const LessonContent = ({
   lectures,
   course,
   lessonDetail,
   url,
+  histories,
 }: {
   lectures: TCourseUpdateContentParams["lectures"];
   course?: string;
   lessonDetail?: ILesson;
   url?: boolean | undefined;
+  histories: IHistory[];
 }) => {
   return (
-    <div className="sticky right-0 top-5 flex max-h-[calc(100svh-50px)] flex-col gap-5 overflow-y-auto pb-20 lg:pb-0">
+    <div className="flex max-h-[calc(100svh-50px)] flex-col gap-5 overflow-y-auto pb-20 lg:pb-0">
       {lectures.map((lecture) => (
         <Accordion
           type="single"
@@ -43,6 +46,13 @@ const LessonContent = ({
                       url ? `/${course}/lesson?slug=${lesson.slug}` : undefined
                     }
                     isActive={lessonDetail?.slug === lesson.slug}
+                    isChecked={
+                      url &&
+                      histories.some(
+                        (history) =>
+                          history.lesson.toString() === lesson._id.toString(),
+                      )
+                    }
                   />
                 ))}
               </div>

@@ -3,6 +3,7 @@ import { getCourseBySlug } from "@/lib/actions/course.actions";
 import { findAllLesson, getLessonBySlug } from "@/lib/actions/lesson.actions";
 import Heading from "@/components/common/Heading";
 import LessonContent from "@/components/lesson/LessonContent";
+import { getHistory } from "@/lib/actions/history.actions";
 
 const page = async ({
   params,
@@ -14,7 +15,7 @@ const page = async ({
   const course = params.course;
   const slug = searchParams.slug;
   const findCourse = await getCourseBySlug({ slug: course });
-  const courseId = findCourse?._id.toString();
+  const courseId = findCourse?._id.toString() || "";
   const lessonDetail = await getLessonBySlug({
     slug,
     course: courseId || "",
@@ -27,6 +28,9 @@ const page = async ({
   const prevLesson = lessonList[currentLessonIndex - 1];
   const videoId = lessonDetail?.video_url?.split("v=")[1];
   const lectures = findCourse.lectures || [];
+  const histories = await getHistory({ course: courseId });
+  const completePercentage =
+    ((histories?.length || 0) / lessonList.length) * 100;
   return (
     <div className="grid min-h-screen gap-10 xl:grid-cols-[minmax(0,2fr),minmax(0,1fr)]">
       <div>
@@ -59,12 +63,26 @@ const page = async ({
         </div>
       </div>
       <div>
-        <LessonContent
-          lectures={lectures}
-          course={course}
-          lessonDetail={lessonDetail}
-          url={true}
-        />
+        <div className="sticky right-0 top-5">
+          <div className="flex items-center gap-4">
+            <div className="borderDarkMode bgDarkMode mb-2 h-3 w-full gap-4 rounded-full border">
+              <div
+                className="bg-gradient h-full w-0 rounded-full transition-all duration-300"
+                style={{
+                  width: `${completePercentage}%`,
+                }}
+              />
+            </div>
+            <span className="mb-2 text-base font-medium">{`${completePercentage}%`}</span>
+          </div>
+          <LessonContent
+            lectures={lectures}
+            course={course}
+            lessonDetail={lessonDetail}
+            url={true}
+            histories={histories ? histories : []}
+          />
+        </div>
       </div>
     </div>
   );
