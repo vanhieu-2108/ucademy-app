@@ -19,7 +19,7 @@ const LessonContent = ({
   course?: string;
   lessonDetail?: ILesson;
   url?: boolean | undefined;
-  histories: IHistory[];
+  histories?: IHistory[];
 }) => {
   return (
     <div className="flex max-h-[calc(100svh-50px)] flex-col gap-5 overflow-y-auto pb-20 lg:pb-0">
@@ -48,6 +48,7 @@ const LessonContent = ({
                     isActive={lessonDetail?.slug === lesson.slug}
                     isChecked={
                       url &&
+                      histories &&
                       histories.some(
                         (history) =>
                           history.lesson.toString() === lesson._id.toString(),
