@@ -55,17 +55,23 @@ export async function getLessonBySlug({
     const findLesson = await Lesson.findOne({
       slug,
       course,
-    });
+    }).select("title video_url content");
     return findLesson;
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function findAllLesson({ course }: { course: string }) {
+export async function findAllLesson({
+  course,
+}: {
+  course: string;
+}): Promise<ILesson[] | undefined> {
   try {
     connectToDatabase();
-    const lessons = await Lesson.find({ course });
+    const lessons = await Lesson.find({ course }).select(
+      "title video_url content slug",
+    );
     return JSON.parse(JSON.stringify(lessons)) as any[];
   } catch (error) {
     console.log(error);

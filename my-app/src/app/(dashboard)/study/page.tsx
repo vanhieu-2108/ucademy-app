@@ -1,14 +1,13 @@
-import CourseItem from "@/components/Course/CourseItem";
-import { CourseGrid } from "@/components/common";
+import StudyCourses from "@/app/(dashboard)/study/StudyCourses";
 import Heading from "@/components/common/Heading";
+import { getUserCourse } from "@/lib/actions/user.actions";
 
-export default function page() {
+export default async function page() {
+  const courses = await getUserCourse();
   return (
     <>
       <Heading>Khu vực học tập</Heading>
-      <CourseGrid>
-        <p>My Children</p>
-      </CourseGrid>
+      <StudyCourses courses={courses || []} />
     </>
   );
 }

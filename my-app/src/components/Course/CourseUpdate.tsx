@@ -63,7 +63,7 @@ const formSchema = z.object({
         z.object({
           question: z.string(),
           answer: z.string(),
-        })
+        }),
       )
       .optional(),
   }),
@@ -139,7 +139,7 @@ const CourseUpdate = ({ data }: { data: ICourse }) => {
         autoComplete="off"
         noValidate
       >
-        <div className="mt-10 grid grid-cols-2 gap-8 mb-8">
+        <div className="mb-8 mt-10 grid grid-cols-2 gap-8">
           <FormField
             control={form.control}
             name="title"
@@ -203,7 +203,7 @@ const CourseUpdate = ({ data }: { data: ICourse }) => {
                   <Textarea
                     placeholder="Nhập mô tả..."
                     {...field}
-                    className="h-[200px]"
+                    className="h-[250px]"
                   ></Textarea>
                 </FormControl>
                 <FormMessage />
@@ -218,7 +218,7 @@ const CourseUpdate = ({ data }: { data: ICourse }) => {
                 <FormLabel>Ảnh đại diện</FormLabel>
                 <FormControl>
                   <>
-                    <div className="h-[200px] bg-white rounded-md border border-gray-200 flex relative items-center justify-center">
+                    <div className="relative flex h-[250px] items-center justify-center rounded-md border border-gray-200 bg-white">
                       {!imageWatch ? (
                         <UploadButton
                           endpoint="imageUploader"
@@ -235,7 +235,7 @@ const CourseUpdate = ({ data }: { data: ICourse }) => {
                           src={imageWatch}
                           alt=""
                           fill
-                          className="w-full h-full object-cover"
+                          className="h-full w-full rounded-md object-cover"
                         />
                       )}
                     </div>

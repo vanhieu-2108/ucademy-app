@@ -1,9 +1,13 @@
 import LessonNavigation from "@/app/(dashboard)/[course]/lesson/LessonNavigation";
 import { getCourseBySlug } from "@/lib/actions/course.actions";
-import { findAllLesson, getLessonBySlug } from "@/lib/actions/lesson.actions";
+import { findAllLesson } from "@/lib/actions/lesson.actions";
 import Heading from "@/components/common/Heading";
 import LessonContent from "@/components/lesson/LessonContent";
 import { getHistory } from "@/lib/actions/history.actions";
+import { auth } from "@clerk/nextjs/server";
+import { getUserInfo } from "@/lib/actions/user.actions";
+import PageNotFound from "@/app/not-found";
+import LessonSaveURl from "@/app/(dashboard)/[course]/lesson/LessonSaveURl";
 
 const page = async ({
   params,
@@ -12,18 +16,20 @@ const page = async ({
   params: { course: string };
   searchParams: { slug: string };
 }) => {
+  const { userId } = auth();
+  if (!userId) return <PageNotFound />;
+  const findUser = await getUserInfo({ userId });
+  if (!findUser) return <PageNotFound />;
   const course = params.course;
   const slug = searchParams.slug;
   const findCourse = await getCourseBySlug({ slug: course });
   const courseId = findCourse?._id.toString() || "";
-  const lessonDetail = await getLessonBySlug({
-    slug,
-    course: courseId || "",
-  });
+  if (!findUser.courses.includes(courseId as any)) return <PageNotFound />;
   const lessonList = await findAllLesson({ course: courseId || "" });
-  if (!findCourse || !lessonDetail || !lessonList) return null;
+  const lessonDetail = lessonList?.find((el) => el.slug === slug);
+  if (!findCourse || !lessonList || !lessonDetail) return null;
   const currentLessonIndex =
-    lessonList?.findIndex((el) => el.slug === lessonDetail.slug) || 0;
+    lessonList?.findIndex((el) => el.slug === slug) || 0;
   const nextLesson = lessonList[currentLessonIndex + 1];
   const prevLesson = lessonList[currentLessonIndex - 1];
   const videoId = lessonDetail?.video_url?.split("v=")[1];
@@ -34,6 +40,7 @@ const page = async ({
   return (
     <div className="grid min-h-screen gap-10 xl:grid-cols-[minmax(0,2fr),minmax(0,1fr)]">
       <div>
+        <LessonSaveURl url={`/${course}/lesson?slug=${slug}`} course={course} />
         <div className="relative mb-5 aspect-video">
           <iframe
             width="1404"

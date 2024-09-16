@@ -38,6 +38,10 @@
   .borderDarkMode {
     @apply border-gray-200 dark:border-opacity-10;
   }
+
+  .skeleton {
+    @apply animate-pulse bg-gray-200 dark:bg-grayDarker;
+  }
 }
 @media screen and (max-width: 1023.98px) {
   .course-slider {

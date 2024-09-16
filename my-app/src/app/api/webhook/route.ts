@@ -35,19 +35,25 @@ export async function POST(req: Request) {
 
   const eventType = msg.type;
   if (eventType === "user.created") {
-    // create user to database
+    console.log("User created event received:", msg.data);
     const { id, username, email_addresses, image_url } = msg.data;
-    const user = await createUser({
-      username: username!,
-      name: username!,
-      clerkId: id,
-      email: email_addresses[0].email_address,
-      avatar: image_url,
-    });
-    return NextResponse.json({
-      message: "OK",
-      user,
-    });
+    try {
+      const user = await createUser({
+        username: username!,
+        name: username!,
+        clerkId: id,
+        email: email_addresses[0].email_address,
+        avatar: image_url,
+      });
+      console.log("User created in MongoDB:", user);
+      return NextResponse.json({
+        message: "OK",
+        user,
+      });
+    } catch (error) {
+      console.error("Error creating user:", error);
+      return new Response("Internal Server Error", { status: 500 });
+    }
   }
   // Rest
 
